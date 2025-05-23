@@ -67,4 +67,4 @@ La configuración de Playwright se encuentra en `playwright.config.ts`, donde pu
 - Reportes
 - Capturas de pantalla
 - Videos
-- Trazas 
+- Trazas
