@@ -13,8 +13,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.42.1",
-    "@types/node": "^20.11.24",
-    "typescript": "^5.3.3"
+    "@playwright/test": "1.42.1",
+    "@types/node": "20.17.50",
+    "typescript": "5.3.3"
   }
 }
