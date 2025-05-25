@@ -19,5 +19,16 @@
     "@playwright/test": "^1.52.0",
     "@types/node": "20.17.50",
     "typescript": "5.3.3"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/leisernog/Mi-Proyecto.git"
+  },
+  "bugs": {
+    "url": "https://github.com/leisernog/Mi-Proyecto/issues"
+  },
+  "homepage": "https://github.com/leisernog/Mi-Proyecto#readme"
 }
