@@ -4,16 +4,19 @@
   "description": "Proyecto de pruebas automatizadas con Playwright y TypeScript",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test --reporter=html",
+    "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
-    "report": "playwright show-report"
+    "test:ui": "playwright test --ui",
+    "report": "playwright show-report",
+    "test:codegen": "playwright codegen",
+    "test:trace": "playwright show-trace"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "1.42.1",
+    "@playwright/test": "^1.52.0",
     "@types/node": "20.17.50",
     "typescript": "5.3.3"
   }

@@ -1,27 +1,54 @@
-import { test } from '@playwright/test';
-import { SauceLoginPage } from '../pages/SauceLoginPage';
-import { SauceInventoryPage } from '../pages/SauceInventoryPage';
-import { sauceDemoData } from '../fixtures/sauceDemo.data';
+import { test, expect } from '@playwright/test';
+import { HomePage } from '../pages/HomePage';
+import { SignUpPage } from '../pages/SignUpPage';
+import { LoginPage } from '../pages/LoginPage';
 
-test.describe('Suite de Pruebas Sauce Demo', () => {
-    let loginPage: SauceLoginPage;
-    let inventoryPage: SauceInventoryPage;
+test.describe('User Authentication Flow', () => {
+  // Increase timeout for the entire test file
+  test.setTimeout(60000);
 
-    test.beforeEach(async ({ page }) => {
-        loginPage = new SauceLoginPage(page);
-        inventoryPage = new SauceInventoryPage(page);
+  let homePage: HomePage;
+  let signUpPage: SignUpPage;
+  let loginPage: LoginPage;
+  
+  // Test data
+  const USER = {
+    username: '',  // Will be set in beforeEach
+    password: 'Test123!'
+  };
+
+  test.beforeEach(async ({ page }) => {
+    // Initialize page objects
+    homePage = new HomePage(page);
+    signUpPage = new SignUpPage(page);
+    loginPage = new LoginPage(page);
+
+    // Generate unique username for each test
+    USER.username = SignUpPage.generateUniqueUsername();
+
+    // Navigate to homepage
+    await homePage.navigate();
+    await homePage.waitForPageLoad();
+  });
+
+  test('should register and login successfully', async () => {
+    // Register new user
+    await test.step('Register new user', async () => {
+      await signUpPage.navigateToSignUp();
+      await signUpPage.registerUser(USER.username, USER.password);
     });
 
-    test('Navegar al detalle de un producto después del login', async () => {
-        // Login
-        await loginPage.navigateToLogin(sauceDemoData.baseUrl);
-        await loginPage.login(
-            sauceDemoData.credentials.standardUser.username,
-            sauceDemoData.credentials.standardUser.password
-        );
-
-        // Verificar página de inventario y seleccionar producto
-        await inventoryPage.verifyInventoryPage();
-        await inventoryPage.clickProductTitle(sauceDemoData.products.backpack.id);
+    // Login with new user
+    await test.step('Login with new user', async () => {
+      await loginPage.clickLogin();
+      await loginPage.login(USER.username, USER.password);
+      await loginPage.verifyLoginSuccess(USER.username);
     });
+
+    // Logout
+    await test.step('Logout', async () => {
+      await loginPage.logout();
+      await loginPage.verifyLoggedOut();
+    });
+  });
 });

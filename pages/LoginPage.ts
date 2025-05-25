@@ -3,11 +3,14 @@ import { BasePage } from './BasePage';
 
 export class LoginPage extends BasePage {
     // Selectores
-    private readonly usernameInput = '#username';
-    private readonly passwordInput = '#password';
-    private readonly loginButton = '#login-button';
+    private readonly usernameInput = '#loginusername';
+    private readonly passwordInput = '#loginpassword';
+    private readonly loginButton = 'button:has-text("Log in")';
     private readonly errorMessage = '.error-message';
     private readonly loginForm = '#login-form';
+    private readonly loginLink = '#login2';
+    private readonly logoutLink = '#logout2';
+    private readonly welcomeText = '#nameofuser';
 
     constructor(page: Page) {
         super(page);
@@ -23,22 +26,34 @@ export class LoginPage extends BasePage {
     }
 
     /**
+     * Click en el enlace de login para abrir el modal
+     */
+    async clickLogin() {
+        await this.page.click(this.loginLink);
+        await this.page.waitForSelector('#logInModal', { state: 'visible' });
+    }
+
+    /**
      * Realiza el proceso de login
      * @param username Nombre de usuario
      * @param password Contraseña
      */
     async login(username: string, password: string) {
-        await this.fill(this.usernameInput, username);
-        await this.fill(this.passwordInput, password);
-        await this.click(this.loginButton);
+        await this.page.waitForSelector(this.usernameInput);
+        await this.page.fill(this.usernameInput, username);
+        await this.page.fill(this.passwordInput, password);
+        await this.page.click(this.loginButton);
+        await this.page.waitForSelector('#logInModal', { state: 'hidden' });
     }
 
     /**
      * Verifica si el login fue exitoso
-     * @param expectedUrl URL esperada después del login
+     * @param username Nombre de usuario esperado en el mensaje de bienvenida
      */
-    async verifySuccessfulLogin(expectedUrl: string) {
-        await expect(this.page).toHaveURL(expectedUrl);
+    async verifyLoginSuccess(username: string) {
+        await this.page.waitForSelector(this.welcomeText);
+        const welcomeMessage = await this.page.textContent(this.welcomeText);
+        await expect(welcomeMessage).toContain('Welcome ' + username);
     }
 
     /**
@@ -59,5 +74,23 @@ export class LoginPage extends BasePage {
         
         expect(usernameValue).toBe('');
         expect(passwordValue).toBe('');
+    }
+
+    /**
+     * Realiza el proceso de logout
+     */
+    async logout() {
+        await this.page.waitForSelector(this.logoutLink);
+        await this.page.click(this.logoutLink);
+        // Esperar a que el logout se complete
+        await this.page.waitForSelector(this.loginLink, { state: 'visible' });
+    }
+
+    /**
+     * Verifica si el logout fue exitoso
+     */
+    async verifyLoggedOut() {
+        await expect(this.page.locator(this.loginLink)).toBeVisible();
+        await expect(this.page.locator(this.logoutLink)).toBeHidden();
     }
 } 
